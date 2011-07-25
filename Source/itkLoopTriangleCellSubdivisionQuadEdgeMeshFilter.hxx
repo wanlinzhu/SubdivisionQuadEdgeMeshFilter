@@ -29,7 +29,7 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
   if ( cell->GetType() != OutputCellType::POLYGON_CELL || cell->GetNumberOfPoints() != 3 )
   {
-  return;
+  itkExceptionMacro(<<" The input cell is not a triangle cell");
   }
 
   OutputPointIdentifier oldPointIdArray[3];
