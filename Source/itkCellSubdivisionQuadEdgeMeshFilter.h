@@ -68,8 +68,8 @@ public:
   /** Run-time type information (and related methods).   */
   itkTypeMacro(CellSubdivisionQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
-  itkSetMacro(Resolution, unsigned int);
-  itkGetConstMacro(Resolution, unsigned int);
+  itkSetMacro(ResolutionLevels, unsigned int);
+  itkGetConstMacro(ResolutionLevels, unsigned int);
 
 protected:
   CellSubdivisionQuadEdgeMeshFilter();
@@ -92,7 +92,7 @@ private:
 
 protected:
   EdgePointIdentifierContainerPointer m_EdgesPointIdentifier;
-  unsigned int                        m_Resolution;
+  unsigned int                        m_ResolutionLevels;
 };
 } // end namespace itk
 

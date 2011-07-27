@@ -28,7 +28,7 @@ CellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::CellSubdivisionQuadEdgeMeshFilter()
 {
   m_EdgesPointIdentifier = EdgePointIdentifierContainer::New();
-  m_Resolution = 1;
+  m_ResolutionLevels = 1;
 }
 
 template< typename TInputMesh, typename TOutputMesh >
@@ -36,9 +36,9 @@ void
 CellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::GenerateData()
 {
-  this->CopyInputMeshToOutputMesh();
+  this->CopyInputMeshToOutputMeshGeometry()
 
-  while ( m_Resolution )
+  while ( m_ResolutionLevels )
   {
   OutputMeshPointer result = OutputMeshType::New();
 		
@@ -51,7 +51,7 @@ CellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
   }
   AfterCellsSubdivision(result);
 		
-  --m_Resolution;
+  --m_ResolutionLevels;
   }
 }
 
@@ -89,7 +89,7 @@ CellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  std::cout << indent << "Subdivision Resolution: " << m_Resolution << std::endl;
+  std::cout << indent << "Subdivision Resolution Levels: " << m_ResolutionLevels << std::endl;
 }
 }
 #endif
