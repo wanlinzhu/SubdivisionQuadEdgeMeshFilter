@@ -36,7 +36,7 @@ void
 CellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::GenerateData()
 {
-  this->CopyInputMeshToOutputMeshGeometry()
+  this->CopyInputMeshToOutputMeshGeometry();
 
   while ( m_ResolutionLevels )
   {

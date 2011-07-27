@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
   if ( argc >= 5 )
     {
     unsigned int n = std::atoi(argv[4]);
-    subdivision->SetResolution(n);
+    subdivision->SetResolutionLevels(n);
     }
 
   subdivision->SetInput( reader->GetOutput() );
