@@ -40,7 +40,7 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
   outPoint.Fill(NumericTraits< typename OutputPointType::ValueType >::Zero);
 
   OutputPointIdIterator pter = cell->PointIdsBegin();
-  unsigned int          nn = 0;
+  OutputPointIdentifier nn = 0;
 
   while ( pter != cell->PointIdsEnd() )
     {
@@ -60,7 +60,7 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
   for ( unsigned int ii = 0; ii < 3; ++ii )
     {
-    int jj = ( ii + 1 ) % 3;
+    unsigned int jj = ( ii + 1 ) % 3;
     output->AddFaceTriangle(oldPointIdArray[ii], oldPointIdArray[jj], newPointId);
 
     OutputQEType *edge = output->FindEdge(oldPointIdArray[ii], oldPointIdArray[jj]);

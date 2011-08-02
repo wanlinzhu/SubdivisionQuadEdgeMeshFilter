@@ -39,8 +39,8 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
   OutputPointType pointArray[4];
 
   OutputPointIdIterator it = cell->PointIdsBegin();
-  unsigned int          numberOfPoints = output->GetNumberOfPoints();
-  unsigned int          n = 0;
+  OutputPointIdentifier numberOfPoints = output->GetNumberOfPoints();
+  OutputPointIdentifier n = 0;
 
   while ( it != cell->PointIdsEnd() )
     {
@@ -50,7 +50,7 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
   for ( unsigned int ii = 0; ii < 3; ++ii )
     {
-    int jj = ( ii + 1 ) % 3;
+    unsigned int jj = ( ii + 1 ) % 3;
 
     OutputQEType *edge = this->GetOutput()->FindEdge(oldPointIdArray[ii], oldPointIdArray[jj]);
 
@@ -84,7 +84,7 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
         pointArray[3].Fill(NumericTraits< typename OutputPointType::ValueType >::Zero);
         }
 
-      for ( unsigned kk = 0; kk < 3; kk++ )
+      for ( unsigned int kk = 0; kk < 3; kk++ )
         {
         for ( unsigned int mm = 0; mm < 4; mm++ )
           {
@@ -160,7 +160,7 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
     if ( nb )
       {
-      for ( unsigned kk = 0; kk < 3; ++kk )
+      for ( unsigned int kk = 0; kk < 3; ++kk )
         {
         opt[kk] = 0.75 * ipt[kk] + 0.125 * bpt[kk];
         }
@@ -169,7 +169,7 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
       {
       OutputCoordType beta =
         ( 0.625 - ( 0.375 + 0.25 * vcl_cos(2.0 * vnl_math::pi / nn) ) * ( 0.375 + 0.25 * vcl_cos(2.0 * vnl_math::pi / nn) ) ) / nn;
-      for ( unsigned kk = 0; kk < 3; ++kk )
+      for ( unsigned int kk = 0; kk < 3; ++kk )
         {
         opt[kk] = ( 1.0 - nn * beta ) * ipt[kk] + beta * opt[kk];
         }

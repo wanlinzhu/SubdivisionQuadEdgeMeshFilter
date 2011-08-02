@@ -39,8 +39,8 @@ ModifiedButterflyTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputM
   OutputPointType pointArray[8];
 
   OutputPointIdIterator it = cell->PointIdsBegin();
-  unsigned int          numberOfPoints = output->GetNumberOfPoints();
-  unsigned int          n = 0;
+  OutputPointIdentifier numberOfPoints = output->GetNumberOfPoints();
+  OutputPointIdentifier n = 0;
 
   while ( it != cell->PointIdsEnd() )
     {
@@ -50,7 +50,7 @@ ModifiedButterflyTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputM
 
   for ( unsigned int ii = 0; ii < 3; ++ii )
     {
-    int jj = ( ii + 1 ) % 3;
+    unsigned int jj = ( ii + 1 ) % 3;
 
     OutputQEType *edge = this->GetOutput()->FindEdge(oldPointIdArray[ii], oldPointIdArray[jj]);
 
@@ -119,7 +119,7 @@ ModifiedButterflyTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputM
         pointArray[7].Fill(NumericTraits< typename OutputPointType::ValueType >::Zero);
         }
 
-      for ( unsigned kk = 0; kk < 3; ++kk )
+      for ( unsigned int kk = 0; kk < 3; ++kk )
         {
         for ( unsigned int mm = 0; mm < 8; ++mm )
           {

@@ -37,8 +37,8 @@ LinearTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
   OutputPointType       pointArray[3];
 
   OutputPointIdIterator it = cell->PointIdsBegin();
-  unsigned int          n = 0;
-  unsigned int          numberOfPoints = output->GetNumberOfPoints();
+  OutputPointIdentifier n = 0;
+  OutputPointIdentifier numberOfPoints = output->GetNumberOfPoints();
 
   while ( it != cell->PointIdsEnd() )
     {
@@ -50,7 +50,7 @@ LinearTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
   for ( unsigned int ii = 0; ii < 3; ++ii )
     {
-    int jj = ( ii + 1 ) % 3;
+    unsigned int jj = ( ii + 1 ) % 3;
 
     OutputQEType *edge = this->GetOutput()->FindEdge(oldPointIdArray[ii], oldPointIdArray[jj]);
 
