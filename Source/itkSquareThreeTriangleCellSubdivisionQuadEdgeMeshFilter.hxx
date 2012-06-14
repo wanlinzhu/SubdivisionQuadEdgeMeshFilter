@@ -28,9 +28,9 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::CellSubdivision( OutputCellType *cell, OutputMeshType *output )
 {
   if ( cell->GetType() != OutputCellType::POLYGON_CELL || cell->GetNumberOfPoints() != 3 )
-  {
-  itkExceptionMacro(<<" The input cell is not a triangle cell");
-  }
+    {
+    itkExceptionMacro(<<" The input cell is not a triangle cell");
+    }
 
   OutputPointIdentifier oldPointIdArray[3];
   OutputPointIdentifier newPointId;
@@ -50,9 +50,11 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
     ++nn;
     }
 
+  typename OutputPointType::ValueType den = 1. / static_cast< typename OutputPointType::ValueType >( nn );
+
   for ( unsigned int kk = 0; kk < OutputPointType::PointDimension; ++kk )
     {
-    outPoint[kk] /= nn;
+    outPoint[kk] *= den;
     }
 
   newPointId = output->GetNumberOfPoints();
@@ -65,7 +67,9 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
     OutputQEType *edge = output->FindEdge(oldPointIdArray[ii], oldPointIdArray[jj]);
 
-    if ( edge && !this->m_EdgesPointIdentifier->IndexExists(edge) && !this->m_EdgesPointIdentifier->IndexExists( edge->GetSym() ) )
+    if ( edge &&
+         !this->m_EdgesPointIdentifier->IndexExists(edge) &&
+         !this->m_EdgesPointIdentifier->IndexExists( edge->GetSym() ) )
       {
       this->m_EdgesPointIdentifier->InsertElement(edge, newPointId);
       }
@@ -86,7 +90,9 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
   CopyMeshToMeshPoints( output, this->GetOutput() );
 
   OutputPointIdentifier pointIdArray[2][2];
-  for ( EdgePointIdentifierContainerIterator et = this->m_EdgesPointIdentifier->Begin(); et != this->m_EdgesPointIdentifier->End(); ++et )
+  for ( EdgePointIdentifierContainerIterator et = this->m_EdgesPointIdentifier->Begin();
+        et != this->m_EdgesPointIdentifier->End();
+        ++et )
     {
     pointIdArray[0][0] = et->Index()->GetOrigin();
     pointIdArray[0][1] = et->Index()->GetDestination();
@@ -120,9 +126,135 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 template< typename TInputMesh, typename TOutputMesh >
 void
 SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+::AdaptiveSwapEdges( OutputMeshType *output )
+{
+  if ( !output )
+    {
+    itkExceptionMacro(<< "output Mesh is not defined");
+    }
+
+  OutputMeshPointer mesh = this->GetOutput();
+  OutputCellsContainerPointer cells = mesh->GetCells();
+
+  this->ProcessObject::SetNthOutput( 0, this->MakeOutput(0).GetPointer() );
+  CopyMeshToMeshPoints( output, this->GetOutput() );
+
+  typename Superclass::OutputCellIdentifierListType newCellsToBeSubdivided;
+
+  for ( OutputCellsContainerIterator cellIt = cells->Begin();
+        cellIt != cells->End();
+        ++cellIt )
+    {
+    OutputCellType* cell = cellIt->Value();
+
+    if ( cell->GetType() != OutputCellType::POLYGON_CELL || cell->GetNumberOfPoints() != 3 )
+      {
+      continue;
+      }
+
+    OutputPointIdentifier oldPointIdArray[3];
+
+    OutputPointIdIterator it = cell->PointIdsBegin();
+    unsigned int          n = 0;
+
+    while ( it != cell->PointIdsEnd() )
+      {
+      oldPointIdArray[n] = *it;
+      ++it;
+      ++n;
+      }
+
+    n = 0;
+    unsigned int nn = 0;
+    OutputQEType  * splitEdges[3];
+    OutputQEType  * newEdges[3];
+
+    for ( unsigned int ii = 0; ii < 3; ++ii )
+      {
+      unsigned int jj = ( ii + 1 ) % 3;
+
+      OutputQEType *edge = output->FindEdge(oldPointIdArray[ii], oldPointIdArray[jj]);
+
+      if ( edge )
+        {
+        newEdges[nn] = edge;
+        ++nn;
+        }
+
+      if ( edge && this->m_EdgesPointIdentifier->IndexExists(edge) )
+        {
+        splitEdges[n] = edge;
+        ++n;
+        }
+      }
+
+    OutputPointIdentifier pointIdArray[2][2];
+    if ( n == 0 )
+      {
+      if( nn == 0 || !newEdges[0]->IsLeftSet() )
+        {
+        //copy the input cell
+        this->GetOutput()->AddFaceTriangle(oldPointIdArray[0], oldPointIdArray[1],  oldPointIdArray[2]);
+        }
+      }
+    else
+      {
+      for(unsigned int ii = 0; ii < n; ++ii)
+        {
+
+        pointIdArray[0][0] = splitEdges[ii]->GetOrigin();
+        pointIdArray[0][1] = splitEdges[ii]->GetDestination();
+
+        if ( splitEdges[ii]->IsAtBorder() )
+          {
+          if ( splitEdges[ii]->IsLeftSet() )
+            {
+            pointIdArray[1][0] = splitEdges[ii]->GetOnext()->GetDestination();
+
+            newCellsToBeSubdivided.push_back(this->GetOutput()->AddFaceTriangle(pointIdArray[0][0], pointIdArray[0][1],  pointIdArray[1][0])->GetLeft());
+            }
+          else if ( splitEdges[ii]->IsRightSet() )
+            {
+            pointIdArray[1][0] = splitEdges[ii]->GetOprev()->GetDestination();
+
+            newCellsToBeSubdivided.push_back(this->GetOutput()->AddFaceTriangle(pointIdArray[0][1], pointIdArray[0][0],  pointIdArray[1][0])->GetLeft());
+            }
+          }
+        else
+          {
+          if ( splitEdges[ii]->IsRightSet() )
+            {
+            pointIdArray[1][0] = splitEdges[ii]->GetOnext()->GetDestination();
+            pointIdArray[1][1] = splitEdges[ii]->GetOprev()->GetDestination();
+
+            newCellsToBeSubdivided.push_back(this->GetOutput()->AddFaceTriangle(pointIdArray[1][0], pointIdArray[1][1],  pointIdArray[0][1])->GetLeft());
+            newCellsToBeSubdivided.push_back(this->GetOutput()->AddFaceTriangle(pointIdArray[1][1], pointIdArray[1][0],  pointIdArray[0][0])->GetLeft());
+            }
+          else
+            {
+            pointIdArray[1][0] = splitEdges[ii]->GetOnext()->GetDestination();
+            newCellsToBeSubdivided.push_back(this->GetOutput()->AddFaceTriangle(pointIdArray[0][0], pointIdArray[0][1],  pointIdArray[1][0])->GetLeft());
+            }
+          }
+        }
+      }
+    }
+  this->m_CellsToBeSubdivided.swap(newCellsToBeSubdivided);
+}
+
+template< typename TInputMesh, typename TOutputMesh >
+void
+SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::AfterCellsSubdivision( OutputMeshType *output )
 {
-  SwapEdges(output);
+  if ( this->m_Uniform )
+    {
+    this->SwapEdges(output);
+    }
+  else
+    {
+    this->AdaptiveSwapEdges(output);
+    }
 }
 }
 #endif

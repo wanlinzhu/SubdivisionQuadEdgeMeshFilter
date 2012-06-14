@@ -28,9 +28,9 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::CellSubdivision( OutputCellType *cell, OutputMeshType *output)
 {
   if ( cell->GetType() != OutputCellType::POLYGON_CELL || cell->GetNumberOfPoints() != 3 )
-  {
-  itkExceptionMacro(<<" The input cell is not a triangle cell");
-  }
+    {
+    itkExceptionMacro(<<" The input cell is not a triangle cell");
+    }
 
   OutputPointIdentifier oldPointIdArray[3];
   OutputPointIdentifier newPointIdArray[3];
@@ -57,6 +57,11 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
     if ( this->m_EdgesPointIdentifier->IndexExists(edge) )
       {
       newPointIdArray[ii] = this->m_EdgesPointIdentifier->GetElement(edge);
+      }
+    else if ( this->m_EdgesPointIdentifier->IndexExists(edge->GetSym()) )
+      {
+      newPointIdArray[ii] = this->m_EdgesPointIdentifier->GetElement(edge->GetSym());
+      this->m_EdgesPointIdentifier->InsertElement(edge, newPointIdArray[ii]);
       }
     else if ( edge->IsInternal() )
       {
@@ -94,7 +99,6 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
       newPointIdArray[ii] = numberOfPoints++;
       this->m_EdgesPointIdentifier->InsertElement(edge, newPointIdArray[ii]);
-      this->m_EdgesPointIdentifier->InsertElement(edge->GetSym(), newPointIdArray[ii]);
       output->SetPoint(newPointIdArray[ii], outPoint);
       }
     else if ( edge->IsAtBorder() )
@@ -106,7 +110,6 @@ LoopTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
       outPoint.SetToMidPoint(pointArray[0], pointArray[1]);
       newPointIdArray[ii] = numberOfPoints++;
       this->m_EdgesPointIdentifier->InsertElement(edge, newPointIdArray[ii]);
-      this->m_EdgesPointIdentifier->InsertElement(edge->GetSym(), newPointIdArray[ii]);
       output->SetPoint(newPointIdArray[ii], outPoint);
       }
     else

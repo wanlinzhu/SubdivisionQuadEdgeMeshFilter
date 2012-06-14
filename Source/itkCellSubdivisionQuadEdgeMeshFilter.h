@@ -65,20 +65,31 @@ public:
   typedef typename EdgePointIdentifierContainer::Iterator            EdgePointIdentifierContainerIterator;
   typedef typename EdgePointIdentifierContainer::ConstIterator       EdgePointIdentifierContainerConstIterator;
 
+  typedef std::list< OutputCellIdentifier >                     OutputCellIdentifierListType;
+  typedef typename OutputCellIdentifierListType::const_iterator OutputCellIdentifierListConstIterator;
+
   /** Run-time type information (and related methods).   */
   itkTypeMacro(CellSubdivisionQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   itkSetMacro(ResolutionLevels, unsigned int);
   itkGetConstMacro(ResolutionLevels, unsigned int);
 
+  itkSetMacro(Uniform, bool);
+  itkGetConstMacro(Uniform, bool);
+  itkBooleanMacro(Uniform);
+
+  void AddSubdividedCellId(OutputCellIdentifier cellId){m_CellsToBeSubdivided.push_back(cellId);}
+
 protected:
   CellSubdivisionQuadEdgeMeshFilter();
 
-  ~CellSubdivisionQuadEdgeMeshFilter() {}
+  virtual ~CellSubdivisionQuadEdgeMeshFilter() {}
 
   virtual void BeforeCellsSubdivision(OutputMeshType *output);
 
   virtual void CellSubdivision(OutputCellType *cell, OutputMeshType *output) = 0;
+
+  virtual void FixNeighborCells( OutputMeshType* output );
 
   virtual void AfterCellsSubdivision(OutputMeshType *output);
 
@@ -92,7 +103,9 @@ private:
 
 protected:
   EdgePointIdentifierContainerPointer m_EdgesPointIdentifier;
+  OutputCellIdentifierListType        m_CellsToBeSubdivided;
   unsigned int                        m_ResolutionLevels;
+  bool                                m_Uniform;
 };
 } // end namespace itk
 

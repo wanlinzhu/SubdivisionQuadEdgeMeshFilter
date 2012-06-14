@@ -31,7 +31,7 @@ ModifiedButterflyTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputM
   {
   itkExceptionMacro(<<" The input cell is not a triangle cell");
   }
-	
+
   OutputPointIdentifier oldPointIdArray[3];
   OutputPointIdentifier newPointIdArray[3];
 
@@ -57,6 +57,11 @@ ModifiedButterflyTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputM
     if ( this->m_EdgesPointIdentifier->IndexExists(edge) )
       {
       newPointIdArray[ii] = this->m_EdgesPointIdentifier->GetElement(edge);
+      }
+    else if ( this->m_EdgesPointIdentifier->IndexExists(edge->GetSym()) )
+      {
+      newPointIdArray[ii] = this->m_EdgesPointIdentifier->GetElement(edge->GetSym());
+      this->m_EdgesPointIdentifier->InsertElement(edge, newPointIdArray[ii]);
       }
     else
       {
@@ -129,7 +134,6 @@ ModifiedButterflyTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputM
 
       newPointIdArray[ii] = numberOfPoints++;
       this->m_EdgesPointIdentifier->InsertElement(edge, newPointIdArray[ii]);
-      this->m_EdgesPointIdentifier->InsertElement(edge->GetSym(), newPointIdArray[ii]);
       output->SetPoint(newPointIdArray[ii], outPoint);
       }
     }

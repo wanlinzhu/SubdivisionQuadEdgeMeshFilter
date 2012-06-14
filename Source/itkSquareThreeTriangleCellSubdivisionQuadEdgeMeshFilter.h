@@ -64,7 +64,8 @@ public:
   typedef typename Superclass::EdgePointIdentifierContainerConstIterator EdgePointIdentifierContainerConstIterator;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro(SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter, CellSubdivisionQuadEdgeMeshFilter);
+  itkTypeMacro(SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter,
+               CellSubdivisionQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro(Self);
@@ -78,6 +79,8 @@ protected:
   virtual void CellSubdivision(OutputCellType *cell, OutputMeshType *output);
 
   virtual void SwapEdges(OutputMeshType *output);
+
+  virtual void AdaptiveSwapEdges(OutputMeshType *output);
 
 private:
   SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter(const Self &);

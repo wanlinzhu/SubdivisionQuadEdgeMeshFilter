@@ -1,2 +1,4 @@
 These classes perform triangle mesh subdivision, it needs ITK.
 Detail refer to http://hdl.handle.net/10380/3307
+
+2012-06-14    Collaborate with Arnaud Gelas, Add adaptive features.
