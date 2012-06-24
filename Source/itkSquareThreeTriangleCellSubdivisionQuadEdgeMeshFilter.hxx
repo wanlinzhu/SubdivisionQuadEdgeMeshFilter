@@ -111,6 +111,10 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
         this->GetOutput()->AddFaceTriangle(pointIdArray[0][1], pointIdArray[0][0],  pointIdArray[1][0]);
         }
+      else
+        {
+        itkExceptionMacro(<< "split edge has no faces set on both sides");
+        }
       }
     else
       {
@@ -196,6 +200,7 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
         //copy the input cell
         this->GetOutput()->AddFaceTriangle(oldPointIdArray[0], oldPointIdArray[1],  oldPointIdArray[2]);
         }
+      //n == 0 while nn != 0 will be handled by it's neighbor cell.
       }
     else
       {
@@ -218,6 +223,10 @@ SquareThreeTriangleCellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
             pointIdArray[1][0] = splitEdges[ii]->GetOprev()->GetDestination();
 
             newCellsToBeSubdivided.push_back(this->GetOutput()->AddFaceTriangle(pointIdArray[0][1], pointIdArray[0][0],  pointIdArray[1][0])->GetLeft());
+            }
+          else
+            {
+            itkExceptionMacro(<< "split edge has no faces set on both sides");
             }
           }
         else

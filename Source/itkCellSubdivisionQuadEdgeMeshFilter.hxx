@@ -40,38 +40,38 @@ CellSubdivisionQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
   this->CopyInputMeshToOutputMeshGeometry();
 
   while ( m_ResolutionLevels != 0 )
-  {
-  OutputMeshPointer result = OutputMeshType::New();
-
-  BeforeCellsSubdivision(result);
-
-  this->m_EdgesPointIdentifier->Initialize();
-
-  OutputCellsContainerPointer cells = this->GetOutput()->GetCells();
-
-  if( this->m_Uniform )
     {
-    for ( OutputCellsContainerIterator cellIt = cells->Begin(); cellIt != cells->End(); ++cellIt )
-      {
-      CellSubdivision(cellIt->Value(),result);
-      }
-    }
-  else
-    {
-    OutputCellIdentifierListConstIterator it  = this->m_CellsToBeSubdivided.begin();
-    OutputCellIdentifierListConstIterator end = this->m_CellsToBeSubdivided.end();
-    while( it != end )
-      {
-      OutputCellType* cell = cells->GetElement( *it );
-      this->CellSubdivision( cell, result );
-      ++it;
-      }
-    }
+    OutputMeshPointer result = OutputMeshType::New();
 
-  AfterCellsSubdivision(result);
+    BeforeCellsSubdivision(result);
 
-  --m_ResolutionLevels;
-  }
+    this->m_EdgesPointIdentifier->Initialize();
+
+    OutputCellsContainerPointer cells = this->GetOutput()->GetCells();
+
+    if( this->m_Uniform )
+      {
+      for ( OutputCellsContainerIterator cellIt = cells->Begin(); cellIt != cells->End(); ++cellIt )
+        {
+        CellSubdivision(cellIt->Value(),result);
+        }
+      }
+    else
+      {
+      OutputCellIdentifierListConstIterator it  = this->m_CellsToBeSubdivided.begin();
+      OutputCellIdentifierListConstIterator end = this->m_CellsToBeSubdivided.end();
+      while( it != end )
+        {
+        OutputCellType* cell = cells->GetElement( *it );
+        this->CellSubdivision( cell, result );
+        ++it;
+        }
+      }
+
+    AfterCellsSubdivision(result);
+
+    --m_ResolutionLevels;
+    }
 }
 
 template< typename TInputMesh, typename TOutputMesh >

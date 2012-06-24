@@ -115,13 +115,33 @@ int main(int argc, char *argv[])
   if ( argc >= 6 )
     {
     subdivision->UniformOff();
-    subdivision->AddSubdividedCellId(0);
-    subdivision->AddSubdividedCellId(1);
-    subdivision->AddSubdividedCellId(2);
-    subdivision->AddSubdividedCellId(3);
-    subdivision->AddSubdividedCellId(5);
-    subdivision->AddSubdividedCellId(6);
-    subdivision->AddSubdividedCellId(9);
+
+    int type = std::atoi(argv[5]);
+
+    if ( type )
+      {
+      CellSubdivisionFilterType::OutputCellIdentifierListType cellsToBeSubdivided;
+
+      cellsToBeSubdivided.push_back(0);
+      cellsToBeSubdivided.push_back(1);
+      cellsToBeSubdivided.push_back(2);
+      cellsToBeSubdivided.push_back(3);
+      cellsToBeSubdivided.push_back(5);
+      cellsToBeSubdivided.push_back(6);
+      cellsToBeSubdivided.push_back(9);
+
+      subdivision->SetCellsToBeSubdivided(cellsToBeSubdivided);
+      }
+    else
+      {
+      subdivision->AddSubdividedCellId(0);
+      subdivision->AddSubdividedCellId(1);
+      subdivision->AddSubdividedCellId(2);
+      subdivision->AddSubdividedCellId(3);
+      subdivision->AddSubdividedCellId(5);
+      subdivision->AddSubdividedCellId(6);
+      subdivision->AddSubdividedCellId(9);
+      }
     }
   subdivision->SetInput( reader->GetOutput() );
   subdivision->Update();
